@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../Context/AuthContext'; // Import useAuth hook
+import { LogOut, PowerOffIcon } from 'lucide-react';
 
-// Icons
+// Icons (keep your existing icons)
 const HomeIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -62,6 +64,12 @@ const ManageUsersIcon = () => (
     </svg>
 );
 
+const SurveyResponses = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+);
+
 const SupportIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -77,50 +85,50 @@ const SearchIcon = () => (
 
 const NotificationIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.670 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
     </svg>
 );
 
-// const SuggestionBoxIcon = () => (
-//     <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-//         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-//     </svg>
-// );
-
-// const DonationBoxIcon = () => (
-//     <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-//         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-//     </svg>
-// );
 
 const DashboardLayout = ({ children }) => {
-    const [userName, setUserName] = useState('Adeola');
+    // We can now get user info from context if it's stored there
+    const { logout, user } = useAuth(); // Get logout function and user object from AuthContext
+    const userName = user ? user.name : 'Guest'; // Use user.name from context, fallback to 'Guest'
+    const userEmail = user ? user.email : 'guest@example.com'; // Use user.email from context
+
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [pageTitle, setPageTitle] = useState('Home');
     const location = useLocation();
+    const navigate = useNavigate();
 
     // Update page title based on current route
     useEffect(() => {
         const path = location.pathname;
         if (path === '/') setPageTitle('Home');
-        else if (path.includes('/donation')) setPageTitle('Donations');
-        else if (path.includes('/member')) setPageTitle('Members');
-        else if (path === '/account') setPageTitle('Account');
-        else if (path === '/support') setPageTitle('Support');
-        else if (path.includes('/suggestion')) setPageTitle('Suggestion Box');
+        else if (path.includes('/donations')) setPageTitle('Donations');
+        else if (path.includes('/members')) setPageTitle('Members');
+        else if (path.includes('/suggestions')) setPageTitle('Suggestion Box');
         else if (path.includes('/gallery')) setPageTitle('Gallery');
         else if (path.includes('/events') || path.includes('/news')) setPageTitle('Events & News');
-        else if (path.includes('/payment')) setPageTitle('Payments');
-        else if (path.includes('/application')) setPageTitle('Applications');
+        else if (path.includes('/payments')) setPageTitle('Payments');
+        else if (path.includes('/applications')) setPageTitle('Applications');
         else if (path.includes('/users')) setPageTitle('Manage Users');
+        else if (path.includes('/chambers')) setPageTitle('Member Chamber');
         else setPageTitle('Home');
     }, [location]);
 
+    const handleLogoutClick = async () => {
+        const success = await logout(); // Call the logout function from AuthContext
+        if (success) {
+            navigate("/login"); // Redirect only if logout process (including API call) indicates success
+        }
+    };
+
     return (
         <div className="flex h-screen overflow-hidden">
-            {/* Support Popup */}
+            {/* Mobile Menu Toggle */}
             <div className="lg:hidden fixed top-4 left-4 z-20">
-                <button 
+                <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     className="p-2 rounded-md bg-[#066AAB] text-white"
                 >
@@ -152,90 +160,110 @@ const DashboardLayout = ({ children }) => {
                 <nav className="flex-1 overflow-y-auto py-2">
                     <ul>
                         <li>
-                            <Link 
-                                to="/" 
+                            <Link
+                                to="/"
                                 className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname === '/' ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <HomeIcon />
                                 <span className="ml-3">Home</span>
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                to="/donations" 
-                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/donation') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                            <Link
+                                to="/donations"
+                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/donations') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <DonationIcon />
                                 <span className="ml-3">Donations</span>
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                to="/members" 
-                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/member') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                            <Link
+                                to="/members"
+                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/members') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <MemberIcon />
                                 <span className="ml-3">Members</span>
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                to="/suggestions" 
-                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/suggestion') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                            <Link
+                                to="/suggestions"
+                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/suggestions') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <SuggestionBoxIcon />
                                 <span className="ml-3">Suggestion Box</span>
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                to="/gallery" 
+                            <Link
+                                to="/gallery"
                                 className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/gallery') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <GalleryIcon />
                                 <span className="ml-3">Gallery</span>
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                to="/news-and-events" 
+                            <Link
+                                to="/news-and-events"
                                 className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/events') || location.pathname.includes('/news') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <EventsIcon />
                                 <span className="ml-3">Events & News</span>
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                to="/payments" 
-                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/payment') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                            <Link
+                                to="/payments"
+                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/payments') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <PaymentsIcon />
                                 <span className="ml-3">Payments</span>
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                to="/applications" 
-                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/application') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                            <Link
+                                to="/applications"
+                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/applications') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <ApplicationsIcon />
                                 <span className="ml-3">Applications</span>
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                to="/users" 
-                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/user') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                            <Link
+                                to="/users"
+                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/users') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <ManageUsersIcon />
                                 <span className="ml-3">Manage Users</span>
                             </Link>
                         </li>
                         <li>
-                            <Link 
-                                to="/chambers" 
-                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname === '/account' ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                            <Link
+                                to="/survey-responses"
+                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/users') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <SurveyResponses />
+                                <span className="ml-3">Surveys</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link
+                                to="/chambers"
+                                className={`flex items-center mx-3 rounded-md px-4 py-3 ${location.pathname.includes('/chambers') ? 'bg-white text-black' : 'hover:bg-blue-800 transition-colors duration-200'}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <AccountIcon />
                                 <span className="ml-3">Member Chamber</span>
@@ -244,30 +272,41 @@ const DashboardLayout = ({ children }) => {
                     </ul>
                 </nav>
 
-                {/* Support */}
+                {/* Support & User Info */}
                 <div className="px-4 py-2 border-t border-blue-800">
-                    <button 
+                    <button
                         className="flex items-center text-sm w-full hover:bg-blue-800 rounded-md px-4 py-2 transition-colors duration-200"
+                        onClick={() => setIsMobileMenuOpen(false)}
                     >
                         <SupportIcon />
                         <span className="ml-3">Support</span>
                     </button>
 
-                    {/* User Info */}
-                    <div className="flex items-center mt-2 pt-4 border-t border-blue-800">
-                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                            {userName.charAt(0)}
+                    {/* User Info and Logout Button */}
+                    <div className="flex items-center justify-between mt-2 pt-4 border-t border-blue-800">
+                        <div className="flex items-center">
+                            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                                <PowerOffIcon size={20} />
+                            </div>
+                            <div className="ml-3">
+                                <div className="text-sm font-medium">{userName}</div>
+                                <div className="text-xs text-blue-200">{userEmail}</div> {/* Display user email from context */}
+                            </div>
                         </div>
-                        <div className="ml-3">
-                            <div className="text-sm font-medium">{userName}</div>
-                            <div className="text-xs text-blue-200">test@unizik.edu.ng</div>
-                        </div>
+                        {/* Logout Button */}
+                        <button
+                            onClick={handleLogoutClick} // Use the new handler name
+                            className="p-2 rounded-full text-white hover:bg-blue-700 transition-colors duration-200"
+                            title="Logout"
+                        >
+                            <LogOut size={20} />
+                        </button>
                     </div>
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col overflow-hidden lg:ml-0 ml-0">
+            <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Header */}
                 <header className="bg-white border-b z-10">
                     <div className="flex items-center justify-between py-4 px-6">
