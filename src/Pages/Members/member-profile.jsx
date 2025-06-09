@@ -189,7 +189,7 @@ const MemberProfile = () => {
           </div>
           <div>
             <label className="block text-sm text-gray-500 mb-1">Chapter of Interest</label>
-            <p>{member.chapter_of_interest}</p>
+            <p>{member.chapter_name}</p>
           </div>
           <div>
             <label className="block text-sm text-gray-500 mb-1">Employment Status</label>

@@ -155,7 +155,7 @@ const MembersList = () => {
                           {member.first_name} {member.last_name}
                         </Link>
                       </td>
-                      <td className="py-3 px-4">{member.chapter_of_interest}</td>
+                      <td className="py-3 px-4">{member.chapter_name}</td>
                       <td className="py-3 px-4">{member.email}</td>
                       <td className="py-3 px-4">{member.phone}</td>
                       <td className="py-3 px-4 text-right">

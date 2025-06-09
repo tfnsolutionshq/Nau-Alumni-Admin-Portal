@@ -160,7 +160,7 @@ const EditMemberModal = ({ isOpen, onClose, member, onMemberUpdated }) => {
       const config = {
         method: "post",
         maxBodyLength: Number.POSITIVE_INFINITY,
-        url: "https://unizikalumni-api.tfnsolutions.us/api/members",
+        url: "https://unizikalumni-api.tfnsolutions.us/api/member/update",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
