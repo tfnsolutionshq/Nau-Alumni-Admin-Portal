@@ -19,7 +19,12 @@ const ApplicantDetailsPage = () => {
   const [error, setError] = useState(null)
   const [showApproveConfirmationModal, setShowApproveConfirmationModal] = useState(false)
   const [showDeclineReasonModal, setShowDeclineReasonModal] = useState(false)
-  const [actionLoading, setActionLoading] = useState(false) // For approve/decline API calls
+  
+  // Separate loading states for each button
+  const [approveLoading, setApproveLoading] = useState(false) 
+  const [declineLoading, setDeclineLoading] = useState(false) 
+
+  const [successMessage, setSuccessMessage] = useState(null); // State for success message
 
   useEffect(() => {
     const fetchApplicantDetails = async () => {
@@ -90,17 +95,18 @@ const ApplicantDetailsPage = () => {
 
   const handleApproveConfirm = async () => {
     setShowApproveConfirmationModal(false)
-    setActionLoading(true)
+    setApproveLoading(true) // Use separate loading state
     setError(null) // Clear previous errors
+    setSuccessMessage(null); // Clear previous success messages
 
     if (!applicantData || !applicantData.id) {
         setError("No applicant data available for approval.");
-        setActionLoading(false);
+        setApproveLoading(false);
         return;
     }
     if (!isAuthenticated || !token) {
         setError("Authentication required for approval.");
-        setActionLoading(false);
+        setApproveLoading(false);
         return;
     }
 
@@ -125,8 +131,12 @@ const ApplicantDetailsPage = () => {
         
         // Handle success response
         if (response.data && response.data.message) {
-            alert('Application approved successfully!'); // Temporary alert
-            navigate("/applicants"); // Navigate back to list
+            setSuccessMessage('Application approved successfully!'); // Set success message
+            // Update local status for immediate UI reflection without re-fetching all details
+            setApplicantData(prev => ({ ...prev, status: 'Approved' })); 
+            setTimeout(() => {
+                navigate("/applications"); // Navigate back to list after delay
+            }, 2000); // Display message for 2 seconds
         } else {
             setError("Approval failed: Unexpected response from API.");
         }
@@ -140,7 +150,7 @@ const ApplicantDetailsPage = () => {
             setError("Failed to approve application. Please try again.");
         }
     } finally {
-        setActionLoading(false);
+        setApproveLoading(false); // Reset loading state
     }
   }
 
@@ -150,17 +160,18 @@ const ApplicantDetailsPage = () => {
 
   const handleDeclineConfirm = async (reason) => {
     setShowDeclineReasonModal(false)
-    setActionLoading(true)
+    setDeclineLoading(true) // Use separate loading state
     setError(null) // Clear previous errors
+    setSuccessMessage(null); // Clear previous success messages
 
     if (!applicantData || !applicantData.id) {
         setError("No applicant data available for decline.");
-        setActionLoading(false);
+        setDeclineLoading(false);
         return;
     }
     if (!isAuthenticated || !token) {
         setError("Authentication required for decline.");
-        setActionLoading(false);
+        setDeclineLoading(false);
         return;
     }
 
@@ -186,8 +197,12 @@ const ApplicantDetailsPage = () => {
 
         // Handle success response
         if (response.data && response.data.message) {
-            alert('Application declined successfully!'); // Temporary alert
-            navigate("/applications"); // Navigate back to list
+            setSuccessMessage('Application declined successfully!'); // Set success message
+            // Update local status for immediate UI reflection without re-fetching all details
+            setApplicantData(prev => ({ ...prev, status: 'Declined', rejection_reason: reason }));
+            setTimeout(() => {
+                navigate("/applications"); // Navigate back to list after delay
+            }, 2000); // Display message for 2 seconds
         } else {
             setError("Decline failed: Unexpected response from API.");
         }
@@ -201,7 +216,7 @@ const ApplicantDetailsPage = () => {
             setError("Failed to decline application. Please try again.");
         }
     } finally {
-        setActionLoading(false);
+        setDeclineLoading(false); // Reset loading state
     }
   }
 
@@ -285,7 +300,7 @@ const ApplicantDetailsPage = () => {
       <div className="w-full mx-auto px-6 py-4">
         {/* Header */}
         <div className="border-b pb-4">
-          <button className="flex p-1 shadow rounded items-center w-fit text-gray-600 hover:text-orange-500" onClick={handleGoBack} disabled={actionLoading}>
+          <button className="flex p-1 shadow rounded items-center w-fit text-gray-600 hover:text-orange-500" onClick={handleGoBack} disabled={approveLoading || declineLoading}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Go Back
           </button>
@@ -296,12 +311,20 @@ const ApplicantDetailsPage = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <h2 className="text-lg font-medium">Application Details for {applicantData.first_name} {applicantData.last_name}</h2>
             <div className="flex gap-2">
-              <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" onClick={handleApprove} disabled={actionLoading || applicantData.status === 'Approved' || applicantData.status === 'Declined'}>
-                {actionLoading ? <Loader2 className="animate-spin mr-2" size={18} /> : null}
+              <button 
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" 
+                onClick={handleApprove} 
+                disabled={approveLoading || declineLoading || applicantData.status === 'Approved' || applicantData.status === 'Declined'} // Disable both if one is loading
+              >
+                {approveLoading ? <Loader2 className="animate-spin mr-2" size={18} /> : null}
                 Approve
               </button>
-              <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" onClick={handleDecline} disabled={actionLoading || applicantData.status === 'Approved' || applicantData.status === 'Declined'}>
-                {actionLoading ? <Loader2 className="animate-spin mr-2" size={18} /> : null}
+              <button 
+                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" 
+                onClick={handleDecline} 
+                disabled={approveLoading || declineLoading || applicantData.status === 'Approved' || applicantData.status === 'Declined'} // Disable both if one is loading
+              >
+                {declineLoading ? <Loader2 className="animate-spin mr-2" size={18} /> : null}
                 Decline
               </button>
             </div>
@@ -311,6 +334,13 @@ const ApplicantDetailsPage = () => {
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
                     <strong className="font-bold">Error!</strong>
                     <span className="block sm:inline ml-2">{error}</span>
+                </div>
+            )}
+            {/* Display success message */}
+            {successMessage && (
+                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <strong className="font-bold">Success!</strong>
+                    <span className="block sm:inline ml-2">{successMessage}</span>
                 </div>
             )}
 

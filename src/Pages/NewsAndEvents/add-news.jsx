@@ -189,13 +189,13 @@ const NewNewsPage = () => {
               Go Back
             </button>
             <div className="flex gap-2">
-              <button
+              {/* <button
                 className="text-gray-600 border border-gray-300 px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleSaveAsDraft}
                 disabled={loading}
               >
                 {loading ? "Saving..." : "Save as Draft"}
-              </button>
+              </button> */}
               <button
                 className="bg-orange-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleSubmit}
@@ -207,7 +207,7 @@ const NewNewsPage = () => {
           </div>
 
           {/* Form Content */}
-          <div className="p-4">
+          <div className="py-4">
             <h1 className="text-2xl font-bold mb-6">New News</h1>
 
             {/* Success Message */}

@@ -266,7 +266,7 @@ const EditEventModal = ({ isOpen, onClose, eventData, onEventUpdated }) => {
                     required
                   >
                     <option value="Event">Event</option>
-                    <option value="Announcement">Announcement</option>
+                    {/* <option value="Announcement">Announcement</option> */}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
                 </div>

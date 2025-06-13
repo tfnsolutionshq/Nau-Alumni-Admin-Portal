@@ -160,7 +160,7 @@ const DonationList = () => {
                                 <table className="w-full border">
                                     <thead className="bg-gray-100">
                                         <tr>
-                                            <th className="text-left py-3 px-4 font-medium">DONATOR NAME</th>
+                                            <th className="text-left py-3 px-4 font-medium">DONOR NAME</th>
                                             <th className="text-left py-3 px-4 font-medium">EMAIL</th>
                                             <th className="text-left py-3 px-4 font-medium">PHONE</th>
                                             <th className="text-left py-3 px-4 font-medium">DONATION DATE</th>

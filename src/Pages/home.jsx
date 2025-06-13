@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { MoreVertical, ChevronRight } from "lucide-react"
 import axios from "axios"
 import { useAuth } from "../Context/AuthContext" 
+import { Link } from "react-router-dom"
 
 function AdminDashboard() {
   const [showQuickActions, setShowQuickActions] = useState(false)
@@ -129,24 +130,24 @@ function AdminDashboard() {
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
                   <ul className="py-1">
                     <li>
-                      <a href="/" className="block px-4 py-2 hover:bg-gray-100">
-                        New Donation
-                      </a>
+                      <Link to={`/create-donation`} className="block px-4 py-2 hover:bg-gray-100">
+                        Add New Donation
+                      </Link>
                     </li>
                     <li>
-                      <a href="/" className="block px-4 py-2 hover:bg-gray-100">
-                        Add Member
-                      </a>
+                      <Link to={`/add-member`} className="block px-4 py-2 hover:bg-gray-100">
+                        Add New Member
+                      </Link>
                     </li>
                     <li>
-                      <a href="/" className="block px-4 py-2 hover:bg-gray-100">
-                        Generate Report
-                      </a>
+                      <Link to={`/add-news`} className="block px-4 py-2 hover:bg-gray-100">
+                        Add News
+                      </Link>
                     </li>
                     <li>
-                      <a href="/login" className="block px-4 py-2 hover:bg-gray-100">
-                        Logout
-                      </a>
+                      <Link to={`/add-event`} className="block px-4 py-2 hover:bg-gray-100">
+                        Add Event
+                      </Link>
                     </li>
                   </ul>
                 </div>
